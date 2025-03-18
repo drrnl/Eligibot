@@ -13,7 +13,7 @@ def project_architecture():
         key="container_with_border",
         css_styles="""
             {
-                background-color: rgba(128, 128, 128, 0.5);  /* Grey with 50% transparency */
+                background-color: rgba(249, 246, 238);  /* Grey with 50% transparency */
                 padding: 20px;
                 border-radius: 10px;  /* rounded corners */
                 display: inline-block;

@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_extras.stylable_container import stylable_container
 import pandas as pd
 
 st.title('Trial Matching')
@@ -22,12 +23,10 @@ trials = [
 
 # Create an expander for each trial
 for trial in trials:
-    with st.expander(trial["trial"]):
-        st.write(trial["info"])
+    with st.container():
+        with st.expander(trial["trial"]):
+            st.write(trial["info"])
     
-
-
-# Display the free text if provided
 
 
 # Process the uploaded file (if any)
