@@ -1,3 +1,6 @@
 streamlit
 streamlit_extras
 pandas
+openai
+requests
+io

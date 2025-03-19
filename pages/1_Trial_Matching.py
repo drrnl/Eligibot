@@ -3,7 +3,7 @@ from streamlit_extras.stylable_container import stylable_container
 import pandas as pd
 
 st.title('Trial Matching')
-st.sidebar.markdown('Trial Matching')
+
 
 
 with st.container():
