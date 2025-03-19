@@ -56,7 +56,7 @@ if uploaded_file is not None:
         text = uploaded_file.read().decode("utf-8")
         st.subheader("TXT File Content:")
         st.write(text)
-
+"""
 if free_text:
     st.write("Processing free text input...")
     with st.spinner("Extracting key terms..."):
@@ -82,3 +82,4 @@ if free_text:
                 st.text(key_terms_json_str)
         except Exception as e:
             st.error(f"Error extracting key terms: {e}")
+"""            
