@@ -2,6 +2,7 @@ import openai
 import requests
 import pandas as pd
 import io
+import os, requests, json
 
 def extract_key_terms(
     discharge_summary: str,

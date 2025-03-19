@@ -1,10 +1,22 @@
 import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
+import openai
 import pandas as pd
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
 
+#Setting OpenAi Key
+openai.api_key = st.secrets["openai"]["api_key"]
+
+
 st.title('Trial Matching')
 
+
+#Configurations for Retrieval
+model = "ft:gpt-4o-2024-08-06:personal::B9xotD4N"
+base_url = "https://clinicaltrials.gov/api/v2"
+number_of_trials = 10
+skip_search = False  # Set to True to skip calling the clinicaltrials.gov API
+output_format = "json"
 
 
 with st.container():
