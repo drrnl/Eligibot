@@ -1,6 +1,5 @@
 streamlit
 streamlit_extras
 pandas
-openai==1.6.1
+openai
 requests
-io
