@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_extras.stylable_container import stylable_container
 import openai
 import pandas as pd
+import os, requests, json, io
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
 
 #Setting OpenAi Key
@@ -55,3 +56,29 @@ if uploaded_file is not None:
         text = uploaded_file.read().decode("utf-8")
         st.subheader("TXT File Content:")
         st.write(text)
+
+if free_text:
+    st.write("Processing free text input...")
+    with st.spinner("Extracting key terms..."):
+        try:
+            key_terms_json_str = extract_key_terms(free_text, model=model)
+            try:
+                key_terms = key_terms_json_str
+                st.subheader("Extracted Key Terms:")
+                st.json(key_terms)
+                # Optionally, build query URL and run search if desired.
+                if not skip_search:
+                    query_url = build_ctgov_query(
+                        base_url=base_url,
+                        parsed_terms=key_terms,
+                        page_size=number_of_trials,
+                        output_format=output_format
+                    )
+                    st.write("Query URL for clinicaltrials.gov:")
+                    st.write(query_url)
+                    query_and_save_results(query_url)
+            except json.JSONDecodeError:
+                st.error("The model did not return valid JSON. Raw output:")
+                st.text(key_terms_json_str)
+        except Exception as e:
+            st.error(f"Error extracting key terms: {e}")

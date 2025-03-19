@@ -33,7 +33,7 @@ def extract_key_terms(
         {"role": "user", "content": user_content}
     ]
 
-    response = openai.ChatCompletion.create(
+    response = openai.chat.completions.create(
         model=model,
         messages=messages,
         temperature=0.0,
