@@ -19,7 +19,6 @@ number_of_trials = 10
 skip_search = False  # Set to True to skip calling the clinicaltrials.gov API
 output_format = "json"
 
-
 with st.container():
     st.write("Step 1: Please enter or upload your information.")
 
@@ -28,6 +27,9 @@ with st.container():
 
     # Option to upload a file (CSV, TXT)
     uploaded_file = st.file_uploader("Upload a CSV or TXT file", type=["csv", "txt"])
+    
+    start_button = st.button("Start Matching")
+    
 
 trials = [
     {"trial": "Trial1", "info": "This will contain information, ranking, risk and link to trial"},
@@ -56,8 +58,8 @@ if uploaded_file is not None:
         text = uploaded_file.read().decode("utf-8")
         st.subheader("TXT File Content:")
         st.write(text)
-"""
-if free_text:
+
+if start_button:
     st.write("Processing free text input...")
     with st.spinner("Extracting key terms..."):
         try:
@@ -81,5 +83,4 @@ if free_text:
                 st.error("The model did not return valid JSON. Raw output:")
                 st.text(key_terms_json_str)
         except Exception as e:
-            st.error(f"Error extracting key terms: {e}")
-"""            
+            st.error(f"Error extracting key terms: {e}")            
