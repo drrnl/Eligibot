@@ -22,7 +22,7 @@ def project_architecture():
             }
             """,
     ):
-        st.image(os.path.join("images","project_architecture.png"))
+        st.image(os.path.join("images","project_architecture.png"), use_container_width = True)
 project_architecture()
 
 st.write("Some description of the architecture and then maybe bullet points about the individual models ")

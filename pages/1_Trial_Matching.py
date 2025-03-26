@@ -19,17 +19,28 @@ number_of_trials = 10
 skip_search = False  # Set to True to skip calling the clinicaltrials.gov API
 output_format = "json"
 
+
+
 with st.container():
     st.write("Step 1: Please enter or upload your information.")
 
     # Field to accept free text input
     free_text = st.text_area("Enter some free text:")
-
+    
     # Option to upload a file (CSV, TXT)
-    uploaded_file = st.file_uploader("Upload a CSV or TXT file", type=["csv", "txt"])
+    upload_button = st.button("Uploaded file")
     
+    uploaded_file = None
+    if upload_button:
+        uploaded_file = st.file_uploader("Upload a CSV or TXT file", type=["csv", "txt"])
+        if uploaded_file is not None:
+            st.write(f"File {uploaded_file.name} uploaded successfully.")
+        else:
+            st.write("Please upload a file.")
+    
+
+with st.container():
     start_button = st.button("Start Matching")
-    
 
 trials = [
     {"trial": "Trial1", "info": "This will contain information, ranking, risk and link to trial"},
