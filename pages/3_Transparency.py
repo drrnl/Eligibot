@@ -8,22 +8,7 @@ st.title("Transparency")
 
 st.subheader("Project Architecture")
 
-def project_architecture():
-    with stylable_container(
-        key="container_with_border",
-        css_styles="""
-            {
-                background-color: rgba(249, 246, 238);  /* Grey with 50% transparency */
-                padding: 20px;
-                border-radius: 10px;  /* rounded corners */
-                display: inline-block;
-                width: 100%;  /* Ensure the container spans full width */
-                text-align: center;  /* Center the image */
-            }
-            """,
-    ):
-        st.image(os.path.join("images","project_architecture.png"), use_container_width = True)
-project_architecture()
+st.image(os.path.join("images","project_architecture.png"))
 
 st.write("Some description of the architecture and then maybe bullet points about the individual models ")
 

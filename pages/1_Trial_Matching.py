@@ -39,8 +39,11 @@ with st.container():
             st.write("Please upload a file.")
     
 
+
 with st.container():
-    start_button = st.button("Start Matching")
+    st.write('')
+    st.write("Step 2: Click to begin matching!")
+    start_button = st.button("Start Matching", use_container_width = True)
 
 trials = [
     {"trial": "Trial1", "info": "This will contain information, ranking, risk and link to trial"},

@@ -15,26 +15,29 @@ page_bg_style = f"""
     /* Full-page background */
     .stApp {{
         background: url("data:image/png;base64,{get_base64_encoded_image(image_path)}");
-        background-size: 100%;
-        background-attachment: fixed;
-        background-position: 270px -270px;
-        background-repeat: no-repeat;
-        width: 100 vw;
+        background-size: cover;  /* Cover the entire screen */
+        background-attachment: fixed;  /* Fix the background during scroll */
+        background-position: 270px -270px;  /* Position image in the center */
+        background-repeat: no-repeat;  /* Prevent image repetition */
+        width: 100vw;
         height: 100vh;
+        margin: 0;
+        padding: 0;
     }}
 
     /* Create a "hero" container in the center */
     .hero-container {{
-        position: relative;
-        top: 50%;
-        left: 50%;
-        transform: translate(-5%, 130%);
+        position: fixed;  /* Fixed position to make sure it stays on the page */
+        top: 50%;  /* Center vertically */
+        left: 50%;  /* Center horizontally */
+        transform: translate(-5%, 130%);  /* Translate to center it exactly */
         text-align: center;
-        color: #FFFFFF; /* Adjust text color as needed */
-        background: rgba(0, 0, 0, 0.2); /* Optional: translucent background behind text */
-        padding: 2rem 2rem 4rem 2rem;
+        color: #FFFFFF; /* Text color */
+        background: rgba(0, 0, 0, 0.5); /* Translucent background */
+        padding: 2rem;
         border-radius: 0.5rem;
-        max-width: 500px; /* Constrain width if you like */
+        max-width: 500px; /* Maximum width */
+        z-index: 10;  /* Ensure it's on top of the background */
     }}
 
     /* Larger heading */
@@ -72,7 +75,7 @@ page_bg_style = f"""
 </style>
 """
 
-# Inject the CSS
+# Apply the styles
 st.markdown(page_bg_style, unsafe_allow_html=True)
 
 st.markdown(
