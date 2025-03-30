@@ -4,6 +4,7 @@ import openai
 import pandas as pd
 import os, requests, json, io
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
+from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies
 
 #Setting OpenAi Key
 openai.api_key = st.secrets["openai"]["api_key"]
@@ -92,7 +93,22 @@ if start_button:
                     )
                     st.write("Query URL for clinicaltrials.gov:")
                     st.write(query_url)
-                    query_and_save_results(query_url)
+
+                    # Save retrieval JSON output
+                    trials_json = query_and_save_results(query_url)
+
+                    try:
+                        with open(trials_json, "r") as f:
+                            ctgov_data = json.load(f)
+
+                        final_results = evaluate_patient_eligibility_for_studies(
+                            patient_summary=free_text,
+                            ctgov_data=ctgov_data,
+                            model="gpt-4o-mini"
+                        )
+                        st.write(final_results)
+                    except Exception as e:
+                        st.error(f"Error matching criteria: {e}")
             except json.JSONDecodeError:
                 st.error("The model did not return valid JSON. Raw output:")
                 st.text(key_terms_json_str)
