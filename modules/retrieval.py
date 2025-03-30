@@ -106,6 +106,7 @@ def query_and_save_results(query_url: str, suffix: str = ""):
             with open(f"clinical_trials_results{suffix}.json", 'w') as json_file:
                 json.dump(data, json_file, indent=4)
             print(f"Results saved as clinical_trials_results{suffix}.json")
+            return data
         else:
             print(f"Unsupported Content-Type: {content_type}")
     else:

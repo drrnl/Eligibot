@@ -20,7 +20,7 @@ number_of_trials = 10
 skip_search = False  # Set to True to skip calling the clinicaltrials.gov API
 output_format = "json"
 
-
+text_to_process = None
 
 with st.container():
     st.write("Step 1: Please enter or upload your information.")
@@ -75,8 +75,8 @@ if uploaded_file is not None:
         st.write(text)
 
 if start_button:
-    st.write("Processing free text input...")
-    with st.spinner("Extracting key terms..."):
+    final_results = None
+    with st.spinner("Matching in progress..."):
         try:
             key_terms_json_str = extract_key_terms(free_text, model=model)
             try:
@@ -96,9 +96,8 @@ if start_button:
 
                     # Save retrieval JSON output
                     trials_json = query_and_save_results(query_url)
-
                     try:
-                        with open(trials_json, "r") as f:
+                        with open('clinical_trials_results.json', "r") as f:
                             ctgov_data = json.load(f)
 
                         final_results = evaluate_patient_eligibility_for_studies(
@@ -106,11 +105,28 @@ if start_button:
                             ctgov_data=ctgov_data,
                             model="gpt-4o-mini"
                         )
-                        st.write(final_results)
                     except Exception as e:
                         st.error(f"Error matching criteria: {e}")
             except json.JSONDecodeError:
                 st.error("The model did not return valid JSON. Raw output:")
                 st.text(key_terms_json_str)
         except Exception as e:
-            st.error(f"Error extracting key terms: {e}")            
+            st.error(f"Error extracting key terms: {e}")
+   
+    with open(final_results, 'r') as file:
+        data = json.load(file)
+
+    trials = []
+    for trial_id, trial_data in data.items():
+        trials.append({
+            "trial_id": trial_id,
+            "total_score": trial_data['ranking']['total_score'],
+            "inclusion_results": trial_data['inclusion_results'],
+            "exclusion_results": trial_data['exclusion_results']
+        })
+
+    # Sort the trials by total_score in descending order
+    sorted_trials = sorted(trials, key=lambda x: x['total_score'], reverse=True)
+
+    # Get top 3 trials (or fewer if there are less than 3 trials)
+    top_trials = sorted_trials[:3]           
