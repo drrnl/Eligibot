@@ -9,7 +9,18 @@ from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_t
 #Setting OpenAi Key
 openai.api_key = st.secrets["openai"]["api_key"]
 
-
+def choose_color(total_score):
+      if total_score >= 90:
+            return 'B2E3AF'
+      elif total_score >= 80:
+            return 'D6FAC3'
+      elif total_score >= 70:
+            return 'E9FFCF'
+      elif total_score >= 60:
+            return 'ECBC68'
+      else:
+            return 'EDE4CA'
+      
 st.title('Trial Matching')
 
 
@@ -40,24 +51,10 @@ with st.container():
             st.write("Please upload a file.")
     
 
-
 with st.container():
     st.write('')
     st.write("Step 2: Click to begin matching!")
     start_button = st.button("Start Matching", use_container_width = True)
-
-trials = [
-    {"trial": "Trial1", "info": "This will contain information, ranking, risk and link to trial"},
-    {"trial": "Trial2", "info": "This will contain information, ranking, risk and link to trial"},
-    {"trial": "Trial3", "info": "This will contain information, ranking, risk and link to trial."}
-]
-
-# Create an expander for each trial
-for trial in trials:
-    with st.container():
-        with st.expander(trial["trial"]):
-            st.write(trial["info"])
-    
 
 
 # Process the uploaded file (if any)
@@ -91,7 +88,7 @@ if start_button:
                         page_size=number_of_trials,
                         output_format=output_format
                     )
-                    st.write("Query URL for clinicaltrials.gov:")
+                    st.subheader("Query URL for clinicaltrials.gov:")
                     st.write(query_url)
 
                     # Save retrieval JSON output
@@ -112,12 +109,9 @@ if start_button:
                 st.text(key_terms_json_str)
         except Exception as e:
             st.error(f"Error extracting key terms: {e}")
-   
-    with open(final_results, 'r') as file:
-        data = json.load(file)
 
     trials = []
-    for trial_id, trial_data in data.items():
+    for trial_id, trial_data in final_results.items():
         trials.append({
             "trial_id": trial_id,
             "total_score": trial_data['ranking']['total_score'],
@@ -129,4 +123,40 @@ if start_button:
     sorted_trials = sorted(trials, key=lambda x: x['total_score'], reverse=True)
 
     # Get top 3 trials (or fewer if there are less than 3 trials)
-    top_trials = sorted_trials[:3]           
+    top_trials = sorted_trials[:3]
+
+    for trial in top_trials:
+        # Get the color based on the total_score
+        container_color = choose_color(trial["total_score"])
+        formatted_score = "{:.1f}".format(trial["total_score"])
+
+    # Apply the color to the container using the markdown method
+        with stylable_container(
+            key = f"{trial['trial_id']}",
+
+            css_styles = f"""
+                    {{
+                        border: 2px solid #{container_color};
+                        border-radius: 0.5rem;
+                        padding: calc(1em - 1px)
+                    }}  
+            """,
+        ):
+        
+            # Expander with trial_id and total_score in the title
+            with st.expander(f"Trial ID: {trial['trial_id']} | Eligibility Score: {formatted_score}"):
+                st.markdown(f'<div class="container_{trial["trial_id"]}">', unsafe_allow_html=True)
+            
+                # Display trial details (inclusion, exclusion, and score)
+                st.write(f"**Eligibility Score**: {formatted_score}")
+            
+                st.subheader("Inclusion Criteria:")
+                for inclusion in trial["inclusion_results"]:
+                    st.write(f"- {inclusion['criterion']} (Met: {inclusion['met']})")
+                
+                st.subheader("Exclusion Criteria:")
+                for exclusion in trial["exclusion_results"]:
+                    st.write(f"- {exclusion['criterion']} (Met: {exclusion['met']})")
+            
+                st.markdown('</div>', unsafe_allow_html=True)           
+

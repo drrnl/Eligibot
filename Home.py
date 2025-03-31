@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 import base64
-from streamlit_extras.switch_page_button import switch_page
 
 def get_base64_encoded_image(image_path):
     """Encode image to base64"""
@@ -89,4 +88,4 @@ st.markdown(
 with st.container():
     # Create the "Get Started" button inside the container
     if st.button("Get Started"):
-        switch_page("Trial_Matching")
+        st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
