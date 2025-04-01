@@ -31,24 +31,25 @@ number_of_trials = 10
 skip_search = False  # Set to True to skip calling the clinicaltrials.gov API
 output_format = "json"
 
-text_to_process = None
+user_input = None
 
 with st.container():
     st.write("Step 1: Please enter or upload your information.")
 
     # Field to accept free text input
     free_text = st.text_area("Enter some free text:")
+    if free_text:
+        user_input = free_text
+
     
     # Option to upload a file (CSV, TXT)
-    upload_button = st.button("Uploaded file")
-    
-    uploaded_file = None
-    if upload_button:
-        uploaded_file = st.file_uploader("Upload a CSV or TXT file", type=["csv", "txt"])
-        if uploaded_file is not None:
-            st.write(f"File {uploaded_file.name} uploaded successfully.")
-        else:
-            st.write("Please upload a file.")
+    uploaded_file = st.file_uploader("Upload a CSV or TXT file", type=["csv", "txt"])
+        
+    if uploaded_file:
+        user_input = uploaded_file.read().decode("utf-8")
+        st.write(f"File {uploaded_file.name} uploaded successfully.")
+    else:
+        st.write("Please upload a file.")
     
 
 with st.container():
@@ -56,7 +57,7 @@ with st.container():
     st.write("Step 2: Click to begin matching!")
     start_button = st.button("Start Matching", use_container_width = True)
 
-
+_= '''
 # Process the uploaded file (if any)
 if uploaded_file is not None:
     # If the file is a CSV
@@ -70,12 +71,12 @@ if uploaded_file is not None:
         text = uploaded_file.read().decode("utf-8")
         st.subheader("TXT File Content:")
         st.write(text)
-
+'''
 if start_button:
     final_results = None
     with st.spinner("Matching in progress..."):
         try:
-            key_terms_json_str = extract_key_terms(free_text, model=model)
+            key_terms_json_str = extract_key_terms(user_input, model=model)
             try:
                 key_terms = key_terms_json_str
                 st.subheader("Extracted Key Terms:")
@@ -98,7 +99,7 @@ if start_button:
                             ctgov_data = json.load(f)
 
                         final_results = evaluate_patient_eligibility_for_studies(
-                            patient_summary=free_text,
+                            patient_summary= user_input,
                             ctgov_data=ctgov_data,
                             model="gpt-4o-mini"
                         )
