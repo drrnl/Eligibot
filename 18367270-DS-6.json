@@ -1,0 +1,357 @@
+{
+  "NCT06091332": {
+    "inclusion_results": [
+      {
+        "criterion": "1. Age 18-65 years, any gender;",
+        "met": "true",
+        "reason": "The patient is 30 years old, which is within the age range."
+      },
+      {
+        "criterion": "2. Patients who have experienced their first symptomatic BSCM ICH within the six months before randomisation;",
+        "met": "unknown",
+        "reason": "The summary does not specify if this is the patient's first symptomatic intracerebral hemorrhage (ICH) or when it occurred."
+      },
+      {
+        "criterion": "3. Diagnosed with solitary BSCM through T2, GRE/T2*, or SWI MR imaging;",
+        "met": "true",
+        "reason": "The patient has a known brainstem cavernous malformation (BSCM) confirmed by MRI."
+      },
+      {
+        "criterion": "4. ICH within or around the BSCM confirmed by CT /MR;",
+        "met": "true",
+        "reason": "The MRI findings indicate increased blood products associated with the cavernous malformation, suggesting ICH."
+      },
+      {
+        "criterion": "5. Capable of signing an informed consent form with the accompaniment and understanding of a guardian.",
+        "met": "true",
+        "reason": "It is assumed the patient can provide consent."
+      }
+    ],
+    "exclusion_results": [
+      {
+        "criterion": "1. Cancer history;",
+        "met": "false",
+        "reason": "There is no mention of a cancer history in the patient summary."
+      },
+      {
+        "criterion": "2. Pregnancy or lactation;",
+        "met": "false",
+        "reason": "The patient is female but there is no indication of pregnancy or lactation."
+      },
+      {
+        "criterion": "3. Sirolimus/starch allergy;",
+        "met": "false",
+        "reason": "The patient has an allergy to penicillins, but no mention of sirolimus/starch allergy."
+      },
+      {
+        "criterion": "4. Modified Rankin Scale (mRS) score 5, respiratory failure or currently severe bleeding requiring life support treatment;",
+        "met": "false",
+        "reason": "The patient is described as alert and interactive, with no indication of severe bleeding or respiratory failure."
+      },
+      {
+        "criterion": "5. Abnormal liver and/or kidney function (transaminase levels greater than 50, creatinine greater than 110), abnormal white blood cell/platelet counts (white blood cell count below 3.5 or above 9.5 x 109/L or exceeding normal values, platelet count below 100 or above 300);",
+        "met": "unknown",
+        "reason": "The summary does not provide lab results for liver, kidney function, or blood counts."
+      },
+      {
+        "criterion": "6. History of previous immunosuppressive therapy;",
+        "met": "false",
+        "reason": "There is no mention of previous immunosuppressive therapy in the patient summary."
+      },
+      {
+        "criterion": "7. History of prior surgical intervention for CCM;",
+        "met": "false",
+        "reason": "The patient has no history of surgical intervention for cavernous malformation mentioned."
+      },
+      {
+        "criterion": "8. History of prior cranial radiation therapy;",
+        "met": "false",
+        "reason": "There is no mention of prior cranial radiation therapy."
+      },
+      {
+        "criterion": "9. Familial CCM or people with multiple CCM;",
+        "met": "false",
+        "reason": "The patient is described as having a solitary cavernous malformation."
+      },
+      {
+        "criterion": "10. Patients with concurrent acute active infections (e.g., severe bacterial, viral, or fungal infections);",
+        "met": "false",
+        "reason": "There is no indication of any active infections in the patient summary."
+      },
+      {
+        "criterion": "11. Uncontrolled diabetes mellitus;",
+        "met": "false",
+        "reason": "There is no mention of diabetes mellitus in the patient summary."
+      },
+      {
+        "criterion": "12. Currently participating in another clinical trial;",
+        "met": "false",
+        "reason": "There is no indication that the patient is participating in another clinical trial."
+      },
+      {
+        "criterion": "13. Patient unwilling/unable to undergo MRI.",
+        "met": "false",
+        "reason": "The patient underwent an MRI as part of her evaluation."
+      },
+      {
+        "criterion": "14. Co-administration of drugs affecting CYP3A4 enzymes (ketoconazole, voriconazole, itraconazole, telithromycin, clarithromycin).",
+        "met": "unknown",
+        "reason": "The summary does not provide information on other medications that may affect CYP3A4."
+      }
+    ],
+    "ranking": {
+      "rank": 1,
+      "total_score": 92.10526315789474
+    }
+  },
+  "NCT04076449": {
+    "inclusion_results": [
+      {
+        "criterion": "1) 18 to 70 years of age",
+        "met": "true",
+        "reason": "The patient is 30 years old, which is within the age range."
+      },
+      {
+        "criterion": "2) Diagnosed with a single cerebral cavernous malformation",
+        "met": "true",
+        "reason": "The patient has a known brainstem cavernous malformation."
+      },
+      {
+        "criterion": "3) No prior treatment of the symptomatic lesion",
+        "met": "unknown",
+        "reason": "There is no information provided about any prior treatments for the cavernous malformation."
+      }
+    ],
+    "exclusion_results": [
+      {
+        "criterion": "1) Associated with brain lesions and/or tumors other than CCM",
+        "met": "false",
+        "reason": "The patient has a brainstem cavernous malformation but no other lesions or tumors are mentioned."
+      },
+      {
+        "criterion": "2) History of previous intracranial surgery",
+        "met": "false",
+        "reason": "The patient has not undergone any surgical procedures during this admission."
+      },
+      {
+        "criterion": "3) Prior brain irradiation",
+        "met": "false",
+        "reason": "There is no mention of any prior brain irradiation in the patient's history."
+      },
+      {
+        "criterion": "4) Contraindication or unwilling or unable to undergo research MRI studies",
+        "met": "unknown",
+        "reason": "There is no information provided regarding the patient's ability or willingness to undergo MRI studies."
+      },
+      {
+        "criterion": "5) Pregnant or breastfeeding women",
+        "met": "false",
+        "reason": "There is no indication that the patient is pregnant or breastfeeding."
+      },
+      {
+        "criterion": "6) Persons unable or unlikely to return for follow-up visits",
+        "met": "false",
+        "reason": "The patient has an adequate support system and plans for close outpatient follow-up."
+      },
+      {
+        "criterion": "7) Dementia or other progressive neurological disease",
+        "met": "false",
+        "reason": "The patient is alert and oriented, with no mention of dementia or progressive neurological disease."
+      }
+    ],
+    "ranking": {
+      "rank": 2,
+      "total_score": 90.0
+    }
+  },
+  "NCT04467489": {
+    "inclusion_results": [
+      {
+        "criterion": "1. Clinical diagnosis of CA",
+        "met": "true",
+        "reason": "The patient has a known brainstem cavernous malformation, which qualifies as a clinical diagnosis of cavernous angioma (CA)."
+      },
+      {
+        "criterion": "2. age 18 or older",
+        "met": "true",
+        "reason": "The patient is 30 years old."
+      },
+      {
+        "criterion": "3. solitary or multiple",
+        "met": "unknown",
+        "reason": "The summary does not specify whether the cavernous malformation is solitary or multiple."
+      },
+      {
+        "criterion": "4. familial or sporadic",
+        "met": "unknown",
+        "reason": "There is no information provided about whether the condition is familial or sporadic."
+      },
+      {
+        "criterion": "5. with or without prior symptoms",
+        "met": "true",
+        "reason": "The patient has prior symptoms related to the cavernous malformation."
+      },
+      {
+        "criterion": "1. < 30 years of age",
+        "met": "false",
+        "reason": "The patient is 30 years old, which does not meet this criterion."
+      },
+      {
+        "criterion": "2. one or more seizures (with or without medical therapy) in the prior year",
+        "met": "unknown",
+        "reason": "There is no mention of seizures in the patient's summary."
+      },
+      {
+        "criterion": "OR 1. > 50 years of age",
+        "met": "false",
+        "reason": "The patient is 30 years old."
+      },
+      {
+        "criterion": "2. having received an MRI of the brain with SWI (susceptibility weighted imaging) sequences for any indication in the year prior to enrollment",
+        "met": "unknown",
+        "reason": "The summary does not specify if the patient had an MRI with SWI sequences."
+      },
+      {
+        "criterion": "3. No HMA on brain MRI SWI sequences",
+        "met": "unknown",
+        "reason": "The summary does not provide information about HMA on brain MRI SWI sequences."
+      },
+      {
+        "criterion": "OR 1. > 50 years of age",
+        "met": "false",
+        "reason": "The patient is 30 years old."
+      },
+      {
+        "criterion": "2. having received an MRI of the brain with SWI sequences for any indication in the year prior to enrollment",
+        "met": "unknown",
+        "reason": "The summary does not specify if the patient had an MRI with SWI sequences."
+      },
+      {
+        "criterion": "3. Two or more microbleeds on SWI brain MRI sequences, adjudicated by neuroradiologist",
+        "met": "unknown",
+        "reason": "The summary does not provide information about microbleeds on SWI brain MRI sequences."
+      }
+    ],
+    "exclusion_results": [
+      {
+        "criterion": "1. Prior excision of a solitary CA lesion",
+        "met": "false",
+        "reason": "There is no mention of prior excision of a solitary CA lesion."
+      },
+      {
+        "criterion": "2. prior stereotactic radiosurgery or any brain irradiation",
+        "met": "false",
+        "reason": "There is no mention of prior stereotactic radiosurgery or brain irradiation."
+      },
+      {
+        "criterion": "3. spinal cavernoma without brain lesion",
+        "met": "false",
+        "reason": "The patient has a brainstem cavernous malformation, not a spinal cavernoma."
+      },
+      {
+        "criterion": "4. other brain pathology unrelated to CA (demyelinating disease, brain tumor)",
+        "met": "false",
+        "reason": "The patient's condition is related to a cavernous malformation, not unrelated brain pathology."
+      },
+      {
+        "criterion": "5. seizures or stroke unrelated to CA in the prior year",
+        "met": "unknown",
+        "reason": "There is no information provided about seizures or strokes unrelated to CA."
+      },
+      {
+        "criterion": "6. current pregnancy or within 6 months postpartum",
+        "met": "false",
+        "reason": "There is no indication that the patient is pregnant or postpartum."
+      },
+      {
+        "criterion": "7. reluctance to undergo venipuncture or donate blood specimen, or be called for clinical follow-up for up to one year",
+        "met": "true",
+        "reason": "Assuming patient willingness to participate."
+      },
+      {
+        "criterion": "8. homeless or incarcerated persons, or other reason a subject will be unable/unlikely to be reached for follow-up",
+        "met": "false",
+        "reason": "There is no indication that the patient is homeless or incarcerated."
+      },
+      {
+        "criterion": "Aim 3: 1. concurrent brain disease or structural brain pathology",
+        "met": "false",
+        "reason": "The patient's condition is a known cavernous malformation, which is the focus of the trial."
+      },
+      {
+        "criterion": "2. medical illness requiring hospitalization or surgery, seizure or stroke in the prior 12 months",
+        "met": "false",
+        "reason": "The patient was hospitalized for monitoring but not for a new medical illness or surgery."
+      },
+      {
+        "criterion": "3. active use of prescription medications in the prior 12 months",
+        "met": "true",
+        "reason": "The patient is currently on medications including dexamethasone."
+      },
+      {
+        "criterion": "4. current pregnancy or within 6 months postpartum",
+        "met": "false",
+        "reason": "There is no indication that the patient is pregnant or postpartum."
+      },
+      {
+        "criterion": "5. reluctance to undergo venipuncture or donate blood specimen",
+        "met": "true",
+        "reason": "Assuming patient willingness to participate."
+      },
+      {
+        "criterion": "OR 1. concurrent brain disease or structural brain pathology",
+        "met": "false",
+        "reason": "The patient's condition is a known cavernous malformation, which is the focus of the trial."
+      },
+      {
+        "criterion": "2. medical illness requiring hospitalization or surgery, or stroke in the prior 12 months other than seizure disorder",
+        "met": "false",
+        "reason": "The patient was hospitalized for monitoring but not for a new medical illness or surgery."
+      },
+      {
+        "criterion": "3. active use of prescription medications in the prior 12 months except anticonvulsants",
+        "met": "true",
+        "reason": "The patient is currently on medications including dexamethasone."
+      },
+      {
+        "criterion": "4. current pregnancy or within 6 months postpartum",
+        "met": "false",
+        "reason": "There is no indication that the patient is pregnant or postpartum."
+      },
+      {
+        "criterion": "5. reluctance to undergo venipuncture or donate blood specimen",
+        "met": "true",
+        "reason": "Assuming patient willingness to participate."
+      },
+      {
+        "criterion": "OR 1. concurrent brain disease or structural brain pathology",
+        "met": "false",
+        "reason": "The patient's condition is a known cavernous malformation, which is the focus of the trial."
+      },
+      {
+        "criterion": "2. medical illness requiring hospitalization or surgery within the prior year",
+        "met": "false",
+        "reason": "The patient was hospitalized for monitoring but not for a new medical illness or surgery."
+      },
+      {
+        "criterion": "3. any history of stroke or epileptic seizure within the prior year",
+        "met": "unknown",
+        "reason": "There is no information provided about seizures or strokes."
+      },
+      {
+        "criterion": "4. current pregnancy or within 6 months postpartum",
+        "met": "false",
+        "reason": "There is no indication that the patient is pregnant or postpartum."
+      },
+      {
+        "criterion": "5. reluctance to undergo venipuncture or donate blood specimen",
+        "met": "true",
+        "reason": "Assuming patient willingness to participate."
+      }
+    ],
+    "ranking": {
+      "rank": 3,
+      "total_score": 62.5
+    }
+  }
+}

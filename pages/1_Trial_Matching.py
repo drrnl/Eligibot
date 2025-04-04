@@ -121,10 +121,10 @@ if start_button:
         })
 
     # Sort the trials by total_score in descending order
-    sorted_trials = sorted(trials, key=lambda x: x['total_score'], reverse=True)
+    # sorted_trials = sorted(trials, key=lambda x: x['total_score'], reverse=True)
 
     # Get top 3 trials (or fewer if there are less than 3 trials)
-    top_trials = sorted_trials[:3]
+    top_trials = trials[:3]
 
     for trial in top_trials:
         # Get the color based on the total_score
@@ -147,17 +147,27 @@ if start_button:
             # Expander with trial_id and total_score in the title
             with st.expander(f"Trial ID: {trial['trial_id']} | Eligibility Score: {formatted_score}"):
                 st.markdown(f'<div class="container_{trial["trial_id"]}">', unsafe_allow_html=True)
-            
-                # Display trial details (inclusion, exclusion, and score)
+
+            # Display trial details (inclusion, exclusion, and score)
                 st.write(f"**Eligibility Score**: {formatted_score}")
-            
-                st.subheader("Inclusion Criteria:")
+
+            # Create DataFrame for Inclusion Criteria
+                inclusion_data = []
                 for inclusion in trial["inclusion_results"]:
-                    st.write(f"- {inclusion['criterion']} (Met: {inclusion['met']})")
-                
-                st.subheader("Exclusion Criteria:")
-                for exclusion in trial["exclusion_results"]:
-                    st.write(f"- {exclusion['criterion']} (Met: {exclusion['met']})")
+                    inclusion_data.append([inclusion['criterion'], inclusion['met']])
             
+                inclusion_df = pd.DataFrame(inclusion_data, columns=["Inclusion Criteria", "Met"])
+                st.write("### Inclusion Criteria")
+                st.dataframe(inclusion_df, hide_index=True) 
+
+            # Create DataFrame for Exclusion Criteria
+                exclusion_data = []
+                for exclusion in trial["exclusion_results"]:
+                    exclusion_data.append([exclusion['criterion'], exclusion['met']])
+            
+                exclusion_df = pd.DataFrame(exclusion_data, columns=["Exclusion Criteria", "Met"])
+                st.write("### Exclusion Criteria")
+                st.dataframe(exclusion_df, hide_index=True) 
+
                 st.markdown('</div>', unsafe_allow_html=True)           
 
