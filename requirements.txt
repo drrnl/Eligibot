@@ -3,3 +3,5 @@ streamlit_extras
 pandas
 openai
 requests
+bcrypt
+authlib

@@ -23,7 +23,20 @@ def choose_color(total_score):
       
 st.title('Trial Matching')
 
+def map_condition_to_emoji(condition, is_exclusion = False):
+    if is_exclusion:
+        if condition == 'true':
+            return '❌'
+        elif condition == 'false':
+            return '✅'
+    else:
+        if condition == 'true':
+            return '✅'
+        elif condition == 'false':
+            return '❌'
+    return '🤷'
 
+            
 #Configurations for Retrieval
 model = "ft:gpt-4o-2024-08-06:personal::B9xotD4N"
 base_url = "https://clinicaltrials.gov/api/v2"
@@ -154,7 +167,7 @@ if start_button:
             # Create DataFrame for Inclusion Criteria
                 inclusion_data = []
                 for inclusion in trial["inclusion_results"]:
-                    inclusion_data.append([inclusion['criterion'], inclusion['met']])
+                    inclusion_data.append([inclusion['criterion'], map_condition_to_emoji(inclusion['met'])])
             
                 inclusion_df = pd.DataFrame(inclusion_data, columns=["Inclusion Criteria", "Met"])
                 st.write("### Inclusion Criteria")
@@ -163,7 +176,7 @@ if start_button:
             # Create DataFrame for Exclusion Criteria
                 exclusion_data = []
                 for exclusion in trial["exclusion_results"]:
-                    exclusion_data.append([exclusion['criterion'], exclusion['met']])
+                    exclusion_data.append([exclusion['criterion'], map_condition_to_emoji(exclusion['met'], is_exclusion = True)])
             
                 exclusion_df = pd.DataFrame(exclusion_data, columns=["Exclusion Criteria", "Met"])
                 st.write("### Exclusion Criteria")
