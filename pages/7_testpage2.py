@@ -1,8 +1,9 @@
 import streamlit as st
 
 if st.button("Authenticate"):
-    st.login("google")
-    st.login("google")
+    st.login()
+else:
+    st.write(f"Hello {st.experimental_user.is_logged_in}")
 
 st.json(st.experimental_user)
 

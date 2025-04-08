@@ -6,7 +6,7 @@ def get_base64_encoded_image(image_path):
     """Encode image to base64"""
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode()
-        
+    
 image_path = os.path.join("images", "eligibot.png")
 
 page_bg_style = f"""
@@ -88,4 +88,6 @@ st.markdown(
 with st.container():
     # Create the "Get Started" button inside the container
     if st.button("Get Started"):
+        st.login()
         st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
+

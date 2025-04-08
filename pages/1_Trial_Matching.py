@@ -6,6 +6,10 @@ import os, requests, json, io
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
 from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies
 
+with st.sidebar:
+    if st.button("Log out"):
+        st.logout()
+
 if not st.experimental_user.is_logged_in:
     st.warning('Please authenticate.')
     st.stop()
