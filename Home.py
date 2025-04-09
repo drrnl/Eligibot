@@ -88,6 +88,5 @@ st.markdown(
 with st.container():
     # Create the "Get Started" button inside the container
     if st.button("Get Started"):
-        st.login()
         st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
 

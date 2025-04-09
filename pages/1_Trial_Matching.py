@@ -5,10 +5,21 @@ import pandas as pd
 import os, requests, json, io
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
 from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies
-
+status_legend = pd.DataFrame(
+    {
+        "Icon" : ['✅', '❌', '❔'],
+        "Inclusion": ["Met", "Not Met", "Unkown"],
+        "Exclusion": ["Not Met", "Met", "Unkown"],
+    }
+)
 with st.sidebar:
     if st.button("Log out"):
         st.logout()
+    
+    st.subheader("Criteria Met Status")
+    st.table(status_legend)
+    
+
 
 if not st.experimental_user.is_logged_in:
     st.warning('Please authenticate.')
@@ -42,7 +53,7 @@ def map_condition_to_emoji(condition, is_exclusion = False):
             return '✅'
         elif condition == 'false':
             return '❌'
-    return '🤷'
+    return '❔'
 
             
 #Configurations for Retrieval
