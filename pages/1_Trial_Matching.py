@@ -16,8 +16,8 @@ with st.sidebar:
     if st.button("Log out"):
         st.logout()
     
-    st.subheader("Criteria Met Status")
-    st.table(status_legend)
+    st.subheader("Criteria Status")
+    st.dataframe(status_legend, hide_index = True)
     
 
 
