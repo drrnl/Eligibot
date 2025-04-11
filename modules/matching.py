@@ -285,3 +285,19 @@ def evaluate_patient_eligibility_for_studies(
     results = get_results(results)
     return results
 
+def get_study_by_nct(ctgov_json: dict, nct_id: str):
+    """
+    Return the first study in ctgov_json['studies'] whose
+    identificationModule.nctId matches `nct_id` (case‑insensitive).
+    """
+    if not ctgov_json or "studies" not in ctgov_json:
+        return None
+
+    for study in ctgov_json["studies"]:
+        try:
+            sid = study["protocolSection"]["identificationModule"]["nctId"]
+            if sid.lower() == nct_id.lower():
+                return study
+        except KeyError:
+            continue
+    return None
