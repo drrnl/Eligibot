@@ -5,3 +5,6 @@ openai
 requests
 bcrypt
 authlib
+awscli
+boto3
+pickle

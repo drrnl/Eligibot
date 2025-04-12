@@ -7,7 +7,7 @@ from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_sa
 from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies
 status_legend = pd.DataFrame(
     {
-        "Icon" : ['✅', '❌', '❔'],
+        "Icon" : ['✅', '❌', '❓'],
         "Inclusion": ["Met", "Not Met", "Unkown"],
         "Exclusion": ["Not Met", "Met", "Unkown"],
     }
@@ -53,7 +53,7 @@ def map_condition_to_emoji(condition, is_exclusion = False):
             return '✅'
         elif condition == 'false':
             return '❌'
-    return '❔'
+    return '❓'
 
             
 #Configurations for Retrieval
