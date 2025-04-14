@@ -83,13 +83,16 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-
-# Create a container for the button and use it within the hero section
+page_switch = None
 with st.container():
-    # Create the "Get Started" button inside the container
     if st.button("Get Started"):
+        page_switch = True
         st.login()
+
+if st.experimental_user.is_logged_in and page_switch == True:
+    page_switch = False
+    st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
+
         
-        if st.exerimental_user.is_logged_in:
-            st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
+
 
