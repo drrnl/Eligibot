@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import base64
-
+page_switch = None
 def get_base64_encoded_image(image_path):
     """Encode image to base64"""
     with open(image_path, "rb") as image_file:
@@ -83,7 +83,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-page_switch = None
 with st.container():
     if st.button("Get Started"):
         page_switch = True
