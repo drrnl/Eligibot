@@ -4,7 +4,7 @@ import openai
 import pandas as pd
 import os, requests, json, io
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
-from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies
+from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies, get_study_by_nct
 status_legend = pd.DataFrame(
     {
         "Icon" : ['✅', '❌', '❓'],
@@ -19,8 +19,6 @@ with st.sidebar:
     st.subheader("Criteria Status")
     st.dataframe(status_legend, hide_index = True)
     
-
-
 if not st.experimental_user.is_logged_in:
     st.warning('Please authenticate.')
     st.stop()
@@ -59,7 +57,7 @@ def map_condition_to_emoji(condition, is_exclusion = False):
 #Configurations for Retrieval
 model = "ft:gpt-4o-2024-08-06:personal::B9xotD4N"
 base_url = "https://clinicaltrials.gov/api/v2"
-number_of_trials = 10
+number_of_trials = 5
 skip_search = False  # Set to True to skip calling the clinicaltrials.gov API
 output_format = "json"
 
@@ -197,13 +195,24 @@ if start_button:
             })
 
         top_trials = sorted(trials, key=lambda x: x['total_score'], reverse=True)[:3]
+        enriched_trials = []           # will hold (trial_dict, full_study_json)
 
         for trial in top_trials:
+            nct_id = trial["trial_id"]
+            full_study = get_study_by_nct(ctgov_data, nct_id)
+            if full_study:                           # found it
+                enriched_trials.append((trial, full_study))
+            else:                                    # fall‑back (should be rare)
+                enriched_trials.append((trial, {"error": "Study not found in ctgov_data"}))
+        
+        for trial, study_json in enriched_trials:
             trial_id = trial["trial_id"]
             total_score = trial["total_score"]
             formatted_score = "{:.1f}".format(total_score)
             final_score = min(max(total_score, 0), 100)
             stroke_color = choose_color(final_score)
+            ident = study_json["protocolSection"]["identificationModule"]
+            status = study_json["protocolSection"]["statusModule"]
 
             radius = 26
             circumference = 2 * 3.14159 * radius
@@ -254,22 +263,69 @@ if start_button:
                 """
                 st.markdown(header_html, unsafe_allow_html=True)
 
-                with st.expander("See Details"):
-                    st.write(f"**Eligibility Score**: {formatted_score}")
+                with st.expander("🔍  See Study Details", expanded=False):
+                    try:
+                        ident = study_json['protocolSection']['identificationModule']
+                        status = study_json['protocolSection']['statusModule']
+                        design = study_json['protocolSection']['designModule']
+                        sponsor = study_json['protocolSection']['sponsorCollaboratorsModule']
+                        desc = study_json['protocolSection']['descriptionModule']
+                        elig = study_json['protocolSection']['eligibilityModule']
+                        locs = study_json['protocolSection']['contactsLocationsModule'].get('locations', [])
+                        contacts = study_json['protocolSection']['contactsLocationsModule'].get('centralContacts', [])
 
-                    inclusion_data = [
-                        [inc['criterion'], map_condition_to_emoji(inc['met'])]
-                        for inc in trial["inclusion_results"]
-                    ]
-                    inclusion_df = pd.DataFrame(inclusion_data, columns=["Inclusion Criteria", "Met"])
-                    st.write("### Inclusion Criteria")
-                    st.dataframe(inclusion_df, hide_index=True)
+                        # Layout: two-column summary
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            st.markdown(f"**📌  Title:** {ident.get('briefTitle', 'NA')}")
+                            st.markdown(f"**🏥  Sponsor:** {sponsor['leadSponsor'].get('name', 'NA')}")
+                            st.markdown(f"**📅  Start Date:** {status.get('startDateStruct', {}).get('date', 'NA')}")
+                            st.markdown(f"**🎯  Enrollment:** {design['enrollmentInfo'].get('count', 'NA')} participants")
+                        with col2:
+                            study_type = design.get('studyType', 'NA')
+                            st.markdown(f"**🧪  Study Type:** {study_type}")
+                            st.markdown(f"**📈  Status:** {status.get('overallStatus', 'NA')}")
+                            st.markdown(f"**📆  Estimated Completion:** {status.get('completionDateStruct', {}).get('date', 'NA')}")
 
-                    exclusion_data = [
-                        [exc['criterion'], map_condition_to_emoji(exc['met'], is_exclusion=True)]
-                        for exc in trial["exclusion_results"]
-                    ]
-                    exclusion_df = pd.DataFrame(exclusion_data, columns=["Exclusion Criteria", "Met"])
-                    st.write("### Exclusion Criteria")
-                    st.dataframe(exclusion_df, hide_index=True)
-       
+                        # Eligibility summary
+                        st.markdown("---")
+                        st.markdown(f"**👥 Eligibility:** Ages {elig.get('minimumAge','NA')} – {elig.get('maximumAge','NA')}, Sex: {elig.get('sex','ALL')}")
+                        st.markdown(f"**🩺 Conditions:** {', '.join(study_json['protocolSection']['conditionsModule'].get('conditions', []))}")
+                        if keywords := study_json['protocolSection']['conditionsModule'].get('keywords'):
+                            st.markdown(f"**🔍 Keywords:** {', '.join(keywords[:6])}")
+
+                        # Location summary
+                        if locs:
+                            location_str = ", ".join(f"{l.get('city','')} ({l.get('country','')})" for l in locs)
+                            st.markdown(f"**📍  Locations:** {location_str}")
+
+                        # Main contact
+                        if contacts:
+                            contact = contacts[0]
+                            contact_email = contact.get('email', 'NA')
+                            st.markdown(f"**📬  Contact:** {contact.get('name', 'NA')} — [{contact_email}](mailto:{contact_email})")
+
+                        # Score
+                        st.markdown("---")
+                        st.markdown(f"**⭐  Eligibility Score:** {formatted_score}")
+
+                        # Inclusion Criteria
+                        st.markdown("### Inclusion Criteria")
+                        inclusion_data = [
+                            [inc['criterion'], map_condition_to_emoji(inc['met'])]
+                            for inc in trial["inclusion_results"]
+                        ]
+                        inclusion_df = pd.DataFrame(inclusion_data, columns=["Inclusion Criteria", "Met"])
+                        st.dataframe(inclusion_df, hide_index=True, use_container_width=True)
+
+                        # Exclusion Criteria
+                        st.markdown("### Exclusion Criteria")
+                        exclusion_data = [
+                            [exc['criterion'], map_condition_to_emoji(exc['met'], is_exclusion=True)]
+                            for exc in trial["exclusion_results"]
+                        ]
+                        exclusion_df = pd.DataFrame(exclusion_data, columns=["Exclusion Criteria", "Met"])
+                        st.dataframe(exclusion_df, hide_index=True, use_container_width=True)
+
+                    except Exception as e:
+                        st.warning(f"Unable to load full study details: {e}")
