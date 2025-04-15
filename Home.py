@@ -85,12 +85,19 @@ st.markdown(
 )
 with st.container():
     if st.button("Get Started"):
-        page_switch = True
-        st.login()
+        if not st.experimental_user.is_logged_in:
+            st.session_state.page_switch = True
+            st.login()
+        else:
+            st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
 
-if st.experimental_user.is_logged_in and page_switch == True:
-    page_switch = False
+if st.experimental_user.is_logged_in and st.session_state.page_switch:
+    st.session_state.page_switch = False
     st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
+
+        
+
+
 
         
 
