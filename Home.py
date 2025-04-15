@@ -92,9 +92,10 @@ with st.container():
         if not st.experimental_user.is_logged_in:
             st.session_state.page_switch = True
             st.login()
-            st.experimental_rerun()
         else:
             st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
+
+st.write(f"{st.experimental_user.is_logged_in} , {st.session_state.page_switch}")
 
 if st.experimental_user.is_logged_in and st.session_state.page_switch:
     st.session_state.page_switch = False
