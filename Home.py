@@ -92,6 +92,7 @@ with st.container():
         if not st.experimental_user.is_logged_in:
             st.session_state.page_switch = True
             st.login()
+            st.stop()
         else:
             st.switch_page(os.path.join("pages", "1_Trial_Matching.py"))
 
