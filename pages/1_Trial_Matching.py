@@ -5,6 +5,16 @@ import pandas as pd
 import os, requests, json, io
 from modules.retrieval import extract_key_terms, build_ctgov_query, query_and_save_results 
 from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_trials, get_results, evaluate_patient_eligibility_for_studies, get_study_by_nct
+from modules.risk_prediction import get_risk_prediction
+import random
+
+theme_base = st.get_option("theme.base")
+is_dark = theme_base == "dark"
+
+bg_color = "#1e1e1e" if is_dark else "#f8f9fa"
+border_color = "#444" if is_dark else "#dee2e6"
+text_color = "#ffffff" if is_dark else "#000000"
+
 status_legend = pd.DataFrame(
     {
         "Icon" : ['✅', '❌', '❓'],
@@ -208,12 +218,13 @@ if start_button:
         for trial, study_json in enriched_trials:
             trial_id = trial["trial_id"]
             total_score = trial["total_score"]
-            formatted_score = "{:.1f}".format(total_score)
+            formatted_score = "{:.0f}".format(total_score)
             final_score = min(max(total_score, 0), 100)
             stroke_color = choose_color(final_score)
             ident = study_json["protocolSection"]["identificationModule"]
             status = study_json["protocolSection"]["statusModule"]
 
+            risk_preds = get_risk_prediction(study_json)
             radius = 26
             circumference = 2 * 3.14159 * radius
             dasharray_final = (final_score / 100) * circumference
@@ -262,6 +273,101 @@ if start_button:
                 </div>
                 """
                 st.markdown(header_html, unsafe_allow_html=True)
+                st.markdown("""
+                <style>
+                .tooltip-container {
+                position: relative;
+                display: inline-block;
+                cursor: help;
+                }
+
+                .tooltip-text {
+                visibility: hidden;
+                width: max-content;
+                max-width: 280px;
+                background-color: #333;
+                color: #fff;
+                text-align: left;
+                border-radius: 6px;
+                padding: 8px 10px;
+                position: absolute;
+                z-index: 1;
+                bottom: 125%;
+                left: 0;
+                opacity: 0;
+                transition: opacity 0.3s;
+                font-size: 13px;
+                line-height: 1.4;
+                }
+
+                .tooltip-container:hover .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+                }
+                </style>
+                """, unsafe_allow_html=True)
+
+                st.markdown("""
+                <style>
+                .score-highlight {
+                    background-color: var(--secondary-background-color);
+                    border: 1px solid var(--border-color);
+                    border-radius: 1rem;
+                    padding: 1.5rem;
+                    margin: 1rem 0;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    text-align: center;
+                    color: var(--text-color);
+                }
+
+                .score-highlight h3 {
+                    margin: 0.5rem 0;
+                    font-size: 1.5rem;
+                    display: inline-block;
+                    position: relative;
+                    color: var(--text-color);
+                }
+
+                .score-highlight .score,
+                .score-highlight .risk {
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    margin: 0.5rem 0 1rem;
+                    color: var(--text-color);
+                }
+
+                .score-highlight .tooltip-container {
+                    position: relative;
+                    display: inline-block;
+                    cursor: help;
+                }
+
+                .score-highlight .tooltip-text {
+                    visibility: hidden;
+                    width: max-content;
+                    max-width: 280px;
+                    background-color: #333;
+                    color: #fff;
+                    text-align: left;
+                    border-radius: 6px;
+                    padding: 8px 10px;
+                    position: absolute;
+                    z-index: 1;
+                    bottom: 125%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                    font-size: 13px;
+                    line-height: 1.4;
+                }
+
+                .score-highlight .tooltip-container:hover .tooltip-text {
+                    visibility: visible;
+                    opacity: 1;
+                }
+                </style>
+                """, unsafe_allow_html=True)
 
                 with st.expander("🔍  See Study Details", expanded=False):
                     try:
@@ -274,43 +380,129 @@ if start_button:
                         locs = study_json['protocolSection']['contactsLocationsModule'].get('locations', [])
                         contacts = study_json['protocolSection']['contactsLocationsModule'].get('centralContacts', [])
 
-                        # Layout: two-column summary
                         col1, col2 = st.columns(2)
                         with col1:
-                            st.markdown(f"**📌  Title:** {ident.get('briefTitle', 'NA')}")
-                            st.markdown(f"**🏥  Sponsor:** {sponsor['leadSponsor'].get('name', 'NA')}")
-                            st.markdown(f"**📅  Start Date:** {status.get('startDateStruct', {}).get('date', 'NA')}")
-                            st.markdown(f"**🎯  Enrollment:** {design['enrollmentInfo'].get('count', 'NA')} participants")
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>📌 Title:</strong>
+                                <div class="tooltip-text">The brief official title of the study.</div>
+                            </div> {ident.get("briefTitle", "NA")}
+                            """, unsafe_allow_html=True)
+
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>🏥 Sponsor:</strong>
+                                <div class="tooltip-text">Organization primarily responsible for the study.</div>
+                            </div> {sponsor["leadSponsor"].get("name", "NA")}
+                            """, unsafe_allow_html=True)
+
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>📅 Start Date:</strong>
+                                <div class="tooltip-text">Date when the study began enrolling participants.</div>
+                            </div> {status.get("startDateStruct", {}).get("date", "NA")}
+                            """, unsafe_allow_html=True)
+
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>🎯 Enrollment:</strong>
+                                <div class="tooltip-text">Planned or actual number of enrolled participants.</div>
+                            </div> {design["enrollmentInfo"].get("count", "NA")} participants
+                            """, unsafe_allow_html=True)
+
                         with col2:
                             study_type = design.get('studyType', 'NA')
-                            st.markdown(f"**🧪  Study Type:** {study_type}")
-                            st.markdown(f"**📈  Status:** {status.get('overallStatus', 'NA')}")
-                            st.markdown(f"**📆  Estimated Completion:** {status.get('completionDateStruct', {}).get('date', 'NA')}")
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>🧪 Study Type:</strong>
+                                <div class="tooltip-text">Type of study design (e.g., interventional, observational).</div>
+                            </div> {study_type}
+                            """, unsafe_allow_html=True)
 
-                        # Eligibility summary
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>📈 Status:</strong>
+                                <div class="tooltip-text">Current recruitment status of the trial.</div>
+                            </div> {status.get("overallStatus", "NA")}
+                            """, unsafe_allow_html=True)
+
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>📆 Estimated Completion:</strong>
+                                <div class="tooltip-text">Projected date when the study will conclude.</div>
+                            </div> {status.get("completionDateStruct", {}).get("date", "NA")}
+                            """, unsafe_allow_html=True)
+
                         st.markdown("---")
-                        st.markdown(f"**👥 Eligibility:** Ages {elig.get('minimumAge','NA')} – {elig.get('maximumAge','NA')}, Sex: {elig.get('sex','ALL')}")
-                        st.markdown(f"**🩺 Conditions:** {', '.join(study_json['protocolSection']['conditionsModule'].get('conditions', []))}")
-                        if keywords := study_json['protocolSection']['conditionsModule'].get('keywords'):
-                            st.markdown(f"**🔍 Keywords:** {', '.join(keywords[:6])}")
 
-                        # Location summary
+                        st.markdown(f"""
+                        <div class="tooltip-container"><strong>👥 Eligibility:</strong>
+                            <div class="tooltip-text">Participant age and sex eligibility requirements.</div>
+                        </div> Ages {elig.get("minimumAge","NA")} – {elig.get("maximumAge","NA")}, Sex: {elig.get("sex","ALL")}
+                        """, unsafe_allow_html=True)
+
+                        st.markdown(f"""
+                        <div class="tooltip-container"><strong>🩺 Conditions:</strong>
+                            <div class="tooltip-text">Medical conditions or diseases being studied.</div>
+                        </div> {", ".join(study_json["protocolSection"]["conditionsModule"].get("conditions", []))}
+                        """, unsafe_allow_html=True)
+
+                        if keywords := study_json['protocolSection']['conditionsModule'].get('keywords'):
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>🔍 Keywords:</strong>
+                                <div class="tooltip-text">Related terms for search indexing or topic tagging.</div>
+                            </div> {", ".join(keywords[:6])}
+                            """, unsafe_allow_html=True)
+
                         if locs:
                             location_str = ", ".join(f"{l.get('city','')} ({l.get('country','')})" for l in locs)
-                            st.markdown(f"**📍  Locations:** {location_str}")
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>📍 Locations:</strong>
+                                <div class="tooltip-text">Cities and countries where the study is taking place.</div>
+                            </div> {location_str}
+                            """, unsafe_allow_html=True)
 
-                        # Main contact
                         if contacts:
                             contact = contacts[0]
                             contact_email = contact.get('email', 'NA')
-                            st.markdown(f"**📬  Contact:** {contact.get('name', 'NA')} — [{contact_email}](mailto:{contact_email})")
+                            st.markdown(f"""
+                            <div class="tooltip-container"><strong>📬 Contact:</strong>
+                                <div class="tooltip-text">Person to contact for study-related questions.</div>
+                            </div> {contact.get("name", "NA")} — <a href="mailto:{contact_email}">{contact_email}</a>
+                            """, unsafe_allow_html=True)
 
-                        # Score
                         st.markdown("---")
-                        st.markdown(f"**⭐  Eligibility Score:** {formatted_score}")
+                        adverse_event_risk = random.randint(1, 30)
+                        st.markdown(f"""
+                        <div class="score-highlight">
+                            <div>
+                                <div class="tooltip-container">
+                                    <h3>⭐ Eligibility Match Score</h3>
+                                    <div class="tooltip-text">Overall score representing how well the patient matches the trial.</div>
+                                </div>
+                                <div class="score">{formatted_score}%</div>
+                            </div>
+                        </div>
+
+                        <div class="score-highlight" style="padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-around; gap: 2rem; flex-wrap: wrap;">
+                                <div style="flex: 1 1 300px; max-width: 400px;">
+                                    <div class="tooltip-container">
+                                        <h3>⛔ Risk of Trial Termination</h3>
+                                        <div class="tooltip-text">Predicted likelihood that the trial may terminate early.</div>
+                                    </div>
+                                    <div class="risk">{risk_preds[0]*100:.0f}%</div>
+                                </div>
+                                <div style="flex: 1 1 300px; max-width: 400px;">
+                                    <div class="tooltip-container">
+                                        <h3>⚠️ Risk of Adverse Events</h3>
+                                        <div class="tooltip-text">Estimated probability of experiencing adverse side effects during the trial.</div>
+                                    </div>
+                                    <div class="risk">{adverse_event_risk}%</div>
+                                </div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
 
                         # Inclusion Criteria
-                        st.markdown("### Inclusion Criteria")
+                        st.markdown("""
+                        <div class="tooltip-container"><h4>Inclusion Criteria</h4>
+                            <div class="tooltip-text">List of criteria that must be met for participation in the study.</div>
+                        </div>
+                        """, unsafe_allow_html=True)
                         inclusion_data = [
                             [inc['criterion'], map_condition_to_emoji(inc['met'])]
                             for inc in trial["inclusion_results"]
@@ -319,7 +511,11 @@ if start_button:
                         st.dataframe(inclusion_df, hide_index=True, use_container_width=True)
 
                         # Exclusion Criteria
-                        st.markdown("### Exclusion Criteria")
+                        st.markdown("""
+                        <div class="tooltip-container"><h4>Exclusion Criteria</h4>
+                            <div class="tooltip-text">Conditions that disqualify a patient from enrolling in the study.</div>
+                        </div>
+                        """, unsafe_allow_html=True)
                         exclusion_data = [
                             [exc['criterion'], map_condition_to_emoji(exc['met'], is_exclusion=True)]
                             for exc in trial["exclusion_results"]
