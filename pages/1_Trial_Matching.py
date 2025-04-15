@@ -8,8 +8,8 @@ from modules.matching import evaluate_criteria, find_trial_id, get_score, rank_t
 status_legend = pd.DataFrame(
     {
         "Icon" : ['✅', '❌', '❓'],
-        "Inclusion": ["Met", "Not Met", "Unkown"],
-        "Exclusion": ["Not Met", "Met", "Unkown"],
+        "Inclusion": ["Met", "Not Met", "Unknown"],
+        "Exclusion": ["Not Met", "Met", "Unknown"],
     }
 )
 with st.sidebar:

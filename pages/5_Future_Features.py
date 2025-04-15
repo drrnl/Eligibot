@@ -1,6 +1,7 @@
 import streamlit as st
+import os 
 
 
 st.title("Future Features")
 
-st.write("")
+st.image(os.path.join("images","Futurework.png"))
