@@ -112,6 +112,39 @@ if uploaded_file is not None:
         st.subheader("TXT File Content:")
         st.write(text)
 '''
+st.markdown("""
+<style>
+.tooltip-container {
+position: relative;
+display: inline-block;
+cursor: help;
+}
+
+.tooltip-text {
+visibility: hidden;
+width: max-content;
+max-width: 280px;
+background-color: #333;
+color: #fff;
+text-align: left;
+border-radius: 6px;
+padding: 8px 10px;
+position: absolute;
+z-index: 1;
+bottom: 125%;
+left: 0;
+opacity: 0;
+transition: opacity 0.3s;
+font-size: 13px;
+line-height: 1.4;
+}
+
+.tooltip-container:hover .tooltip-text {
+visibility: visible;
+opacity: 1;
+}
+</style>
+""", unsafe_allow_html=True)
 if start_button:
     final_results = None
     with st.spinner("Matching in progress..."):
@@ -119,8 +152,34 @@ if start_button:
             key_terms_json_str = extract_key_terms(user_input, model=model)
             try:
                 key_terms = key_terms_json_str
-                st.subheader("Extracted Key Terms:")
-                st.json(key_terms)
+                st.markdown("""
+                <div style="font-size: 1.25rem;" class="tooltip-container">
+                    🔑 <strong>Extracted Key Terms</strong>
+                    <div class="tooltip-text">
+                        These are the key clinical terms extracted from your input, such as conditions and summary descriptions. They're used to build a trial search query.
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+                # Display key terms as before (cleaned version)
+                if "conditions" in key_terms and isinstance(key_terms["conditions"], list):
+                    st.markdown(
+                        """
+                        <div style='font-size: 1.05rem;'>
+                            <ul style='margin-left: 1.5em;'>
+                        """ +
+                        "".join([f"<li>{cond}</li>" for cond in key_terms["conditions"]]) +
+                        "</ul></div>",
+                        unsafe_allow_html=True
+                    )
+
+                if "summary" in key_terms:
+                    st.markdown(
+                        f"<div style='font-size: 1.05rem;'><strong>📝 Summary:</strong> {key_terms['summary']}</div>",
+                        unsafe_allow_html=True
+                    )
+
+
                 if not skip_search:
                     query_url = build_ctgov_query(
                         base_url=base_url,
@@ -128,8 +187,16 @@ if start_button:
                         page_size=number_of_trials,
                         output_format=output_format
                     )
-                    st.subheader("Query URL for clinicaltrials.gov:")
-                    st.write(query_url)
+                    st.text("")
+                    st.markdown(f"""
+                    <div style="margin-top: 1rem; font-size: 1.1rem;" class="tooltip-container">
+                        🔗 <strong><a href="{query_url}" target="_blank" style="text-decoration: none; color: #1f77b4;">
+                        ClinicalTrials.gov Query URL</a></strong>
+                        <div class="tooltip-text">
+                            This is the query link built using the extracted terms. Click to view matching trials directly on ClinicalTrials.gov.
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
                     trials_json = query_and_save_results(query_url)
                     try:
@@ -273,104 +340,11 @@ if start_button:
                 </div>
                 """
                 st.markdown(header_html, unsafe_allow_html=True)
-                st.markdown("""
-                <style>
-                .tooltip-container {
-                position: relative;
-                display: inline-block;
-                cursor: help;
-                }
-
-                .tooltip-text {
-                visibility: hidden;
-                width: max-content;
-                max-width: 280px;
-                background-color: #333;
-                color: #fff;
-                text-align: left;
-                border-radius: 6px;
-                padding: 8px 10px;
-                position: absolute;
-                z-index: 1;
-                bottom: 125%;
-                left: 0;
-                opacity: 0;
-                transition: opacity 0.3s;
-                font-size: 13px;
-                line-height: 1.4;
-                }
-
-                .tooltip-container:hover .tooltip-text {
-                visibility: visible;
-                opacity: 1;
-                }
-                </style>
-                """, unsafe_allow_html=True)
-
-                st.markdown("""
-                <style>
-                .score-highlight {
-                    background-color: var(--secondary-background-color);
-                    border: 1px solid var(--border-color);
-                    border-radius: 1rem;
-                    padding: 1.5rem;
-                    margin: 1rem 0;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                    text-align: center;
-                    color: var(--text-color);
-                }
-
-                .score-highlight h3 {
-                    margin: 0.5rem 0;
-                    font-size: 1.5rem;
-                    display: inline-block;
-                    position: relative;
-                    color: var(--text-color);
-                }
-
-                .score-highlight .score,
-                .score-highlight .risk {
-                    font-size: 2.5rem;
-                    font-weight: 700;
-                    margin: 0.5rem 0 1rem;
-                    color: var(--text-color);
-                }
-
-                .score-highlight .tooltip-container {
-                    position: relative;
-                    display: inline-block;
-                    cursor: help;
-                }
-
-                .score-highlight .tooltip-text {
-                    visibility: hidden;
-                    width: max-content;
-                    max-width: 280px;
-                    background-color: #333;
-                    color: #fff;
-                    text-align: left;
-                    border-radius: 6px;
-                    padding: 8px 10px;
-                    position: absolute;
-                    z-index: 1;
-                    bottom: 125%;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    opacity: 0;
-                    transition: opacity 0.3s;
-                    font-size: 13px;
-                    line-height: 1.4;
-                }
-
-                .score-highlight .tooltip-container:hover .tooltip-text {
-                    visibility: visible;
-                    opacity: 1;
-                }
-                </style>
-                """, unsafe_allow_html=True)
 
                 with st.expander("🔍  See Study Details", expanded=False):
                     try:
+                        
+                        st.text("")
                         ident = study_json['protocolSection']['identificationModule']
                         status = study_json['protocolSection']['statusModule']
                         design = study_json['protocolSection']['designModule']
@@ -388,18 +362,19 @@ if start_button:
                             </div> {ident.get("briefTitle", "NA")}
                             """, unsafe_allow_html=True)
 
+                            st.text("")
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>🏥 Sponsor:</strong>
                                 <div class="tooltip-text">Organization primarily responsible for the study.</div>
                             </div> {sponsor["leadSponsor"].get("name", "NA")}
                             """, unsafe_allow_html=True)
-
+                            st.text("")
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>📅 Start Date:</strong>
                                 <div class="tooltip-text">Date when the study began enrolling participants.</div>
                             </div> {status.get("startDateStruct", {}).get("date", "NA")}
                             """, unsafe_allow_html=True)
-
+                            st.text("")
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>🎯 Enrollment:</strong>
                                 <div class="tooltip-text">Planned or actual number of enrolled participants.</div>
@@ -413,13 +388,13 @@ if start_button:
                                 <div class="tooltip-text">Type of study design (e.g., interventional, observational).</div>
                             </div> {study_type}
                             """, unsafe_allow_html=True)
-
+                            st.text("")
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>📈 Status:</strong>
                                 <div class="tooltip-text">Current recruitment status of the trial.</div>
                             </div> {status.get("overallStatus", "NA")}
                             """, unsafe_allow_html=True)
-
+                            st.text("")
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>📆 Estimated Completion:</strong>
                                 <div class="tooltip-text">Projected date when the study will conclude.</div>
@@ -433,7 +408,7 @@ if start_button:
                             <div class="tooltip-text">Participant age and sex eligibility requirements.</div>
                         </div> Ages {elig.get("minimumAge","NA")} – {elig.get("maximumAge","NA")}, Sex: {elig.get("sex","ALL")}
                         """, unsafe_allow_html=True)
-
+                        st.text("")
                         st.markdown(f"""
                         <div class="tooltip-container"><strong>🩺 Conditions:</strong>
                             <div class="tooltip-text">Medical conditions or diseases being studied.</div>
@@ -441,6 +416,7 @@ if start_button:
                         """, unsafe_allow_html=True)
 
                         if keywords := study_json['protocolSection']['conditionsModule'].get('keywords'):
+                            st.text("")
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>🔍 Keywords:</strong>
                                 <div class="tooltip-text">Related terms for search indexing or topic tagging.</div>
@@ -448,6 +424,7 @@ if start_button:
                             """, unsafe_allow_html=True)
 
                         if locs:
+                            st.text("")
                             location_str = ", ".join(f"{l.get('city','')} ({l.get('country','')})" for l in locs)
                             st.markdown(f"""
                             <div class="tooltip-container"><strong>📍 Locations:</strong>
@@ -456,6 +433,7 @@ if start_button:
                             """, unsafe_allow_html=True)
 
                         if contacts:
+                            st.text("")
                             contact = contacts[0]
                             contact_email = contact.get('email', 'NA')
                             st.markdown(f"""
@@ -466,38 +444,83 @@ if start_button:
 
                         st.markdown("---")
                         adverse_event_risk = random.randint(1, 30)
-                        st.markdown(f"""
-                        <div class="score-highlight">
-                            <div>
-                                <div class="tooltip-container">
-                                    <h3>⭐ Eligibility Match Score</h3>
-                                    <div class="tooltip-text">Overall score representing how well the patient matches the trial.</div>
-                                </div>
-                                <div class="score">{int(final_score)}%</div>
-                            </div>
-                        </div>
 
-                        <div class="score-highlight" style="padding: 1.5rem;">
-                            <div style="display: flex; justify-content: space-around; gap: 2rem; flex-wrap: wrap;">
-                                <div style="flex: 1 1 300px; max-width: 400px;">
-                                    <div class="tooltip-container">
-                                        <h3>⛔ Risk of Trial Termination</h3>
-                                        <div class="tooltip-text">Predicted likelihood that the trial may terminate early.</div>
-                                    </div>
-                                    <div class="risk">{risk_preds[0]*100:.0f}%</div>
-                                </div>
-                                <div style="flex: 1 1 300px; max-width: 400px;">
-                                    <div class="tooltip-container">
-                                        <h3>⚠️ Risk of Adverse Events</h3>
-                                        <div class="tooltip-text">Estimated probability of experiencing adverse side effects during the trial.</div>
-                                    </div>
-                                    <div class="risk">{adverse_event_risk}%</div>
-                                </div>
-                            </div>
+                        # Section heading
+                        st.markdown("""
+                        <div style="text-align: center; margin-bottom: 1rem;">
+                            <h2 style="font-size: 1.8rem;">📊 Trial Suitability Overview</h2>
+                            <p style="font-size: 1.1rem; color: gray;">Quick snapshot of how well you match this trial and what risks may be involved.</p>
                         </div>
                         """, unsafe_allow_html=True)
 
+                        # Animated eligibility score card
+                        st.markdown(f"""
+                        <style>
+                        @keyframes pop {{
+                            0% {{ transform: scale(0.8); opacity: 0; }}
+                            100% {{ transform: scale(1); opacity: 1; }}
+                        }}
+
+                        .enhanced-card {{
+                            background-color: var(--secondary-background-color);
+                            border: 2px solid #c4c4c4;
+                            border-radius: 1rem;
+                            padding: 1.5rem;
+                            margin: 1rem 0;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                            animation: pop 0.6s ease-out forwards;
+                            text-align: center;
+                        }}
+
+                        .enhanced-card h3 {{
+                            font-size: 1.5rem;
+                            margin-bottom: 0.5rem;
+                        }}
+
+                        .enhanced-card .score, .enhanced-card .risk {{
+                            font-size: 3rem;
+                            font-weight: 400;
+                            color: var(--text-color);
+                            margin-top: 0.5rem;
+                        }}
+                        </style>
+
+                        <div class="enhanced-card">
+                            <div class="tooltip-container">
+                                <h3>⭐ Eligibility Match Score</h3>
+                                <div class="tooltip-text">Overall score representing how well the patient matches the trial.</div>
+                            </div>
+                            <div class="score">{int(final_score)}%</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        # Side-by-side risk metrics
+                        col1, col2 = st.columns(2)
+
+                        with col1:
+                            st.markdown(f"""
+                            <div class="enhanced-card">
+                                <div class="tooltip-container">
+                                    <h3>⛔ Risk of Trial Termination</h3>
+                                    <div class="tooltip-text">Predicted likelihood that the trial may terminate early.</div>
+                                </div>
+                                <div class="risk">{risk_preds[0]*100:.0f}%</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+
+                        with col2:
+                            st.markdown(f"""
+                            <div class="enhanced-card">
+                                <div class="tooltip-container">
+                                    <h3>⚠️ Risk of Adverse Events</h3>
+                                    <div class="tooltip-text">Estimated probability of experiencing adverse side effects during the trial.</div>
+                                </div>
+                                <div class="risk">{adverse_event_risk}%</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+
                         # Inclusion Criteria
+                        st.text("")
                         st.markdown("""
                         <div class="tooltip-container"><h4>Inclusion Criteria</h4>
                             <div class="tooltip-text">List of criteria that must be met for participation in the study.</div>
