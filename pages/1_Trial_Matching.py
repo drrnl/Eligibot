@@ -473,7 +473,7 @@ if start_button:
                                     <h3>⭐ Eligibility Match Score</h3>
                                     <div class="tooltip-text">Overall score representing how well the patient matches the trial.</div>
                                 </div>
-                                <div class="score">{formatted_score}%</div>
+                                <div class="score">{int(final_score)}%</div>
                             </div>
                         </div>
 
