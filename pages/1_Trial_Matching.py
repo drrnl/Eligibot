@@ -501,7 +501,7 @@ if start_button:
                             st.markdown(f"""
                             <div class="enhanced-card">
                                 <div class="tooltip-container">
-                                    <h3>⛔ Risk of Trial Termination</h3>
+                                    <h3>⛔ Premature Termination</h3>
                                     <div class="tooltip-text">Predicted likelihood that the trial may terminate early.</div>
                                 </div>
                                 <div class="risk">{risk_preds[0]*100:.0f}%</div>
